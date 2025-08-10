@@ -1,0 +1,65 @@
+AgentOps Replay – Log, visualize & replay agent workflows for debugging & compliance
+Track: VC big bets (Agents)
+1. Motivation / Goal to Achieve
+Enterprises need confidence that AI agents follow policy, use tools correctly, and make auditable decisions. When something goes wrong, teams must replay what happened, step through decisions, and prove compliance.
+Goal:
+ Build a simulation and replay arena for AI agents. The system should:
+capture structured traces of each step (prompts, tool calls, retrieved docs, model I/O),
+
+
+visualize the workflow and decisions, and
+
+
+replay any session deterministically for debugging and compliance review.
+
+
+Participants can choose the agent type they’re most excited about and build their testbed around it. Diversity of agent types is encouraged.
+2. Suggested Agent Types (Pick One or Design Your Own)
+Customer Support Agent – e.g., OpenAI Assistants API agent handling emails or chats with KB retrieval and tool calls (order lookup, invoice send).
+
+
+Voice Call Agent – real-time phone agent handling inbound calls, performing lookups, and generating voice replies.
+
+
+Analytical or Workflow Agent – automates a structured process (e.g., parsing and summarizing reports, running financial models, orchestrating multi-step workflows).
+
+
+If possible, build your logging and replay framework agent-agnostic, so it can support multiple agent types. But as an MVP we recommend you to pick a specific use case. 
+3. Core Features (MVP)
+Universal Agent Logger – record prompts, tool calls, retrievals, outputs, parameters, and timestamps.
+
+
+Visualization UI – graph + timeline view of agent actions; click-through to inspect each step.
+
+
+Deterministic Replay – sandbox mode to re-run sessions using recorded data.
+
+
+4. Stretch Goals (Optional)
+Compliance Pack – policy violation checks and audit report export.
+
+
+Counterfactual Replay – change prompts or parameters and compare outcomes.
+
+
+5. Hints & Resources
+Frameworks: OpenAI Assistants API, LangChain, LlamaIndex (all have tracing hooks).
+
+
+Visualization: React/Next.js + React Flow or d3.js.
+
+
+Data Seeds: MSDialog, MultiWOZ, synthetic KB and task datasets.
+
+
+Storage: JSONL traces in Postgres; artifacts in S3 or local file system.
+
+
+6. Evaluation Criteria
+Coverage: Logs all relevant agent steps.
+Replay Fidelity: Matches original outputs or behavior.
+UX Clarity: Easy to navigate timeline and graph.
+Compliance: Optional policy checks and reports.
+
+7. Why It Matters
+Without clear logs and replay tools, agent behavior is a black box—making it hard to debug failures, audit decisions, or prove compliance. This challenge empowers teams to turn opaque AI workflows into transparent, reproducible processes, enabling safer deployment and faster iteration in enterprise environments.

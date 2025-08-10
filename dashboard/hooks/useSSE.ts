@@ -83,11 +83,6 @@ export function useSSE(options: UseSSEOptions = {}) {
         }, reconnectInterval);
       }
     };
-
-    eventSource.onclose = () => {
-      console.log("SSE connection closed");
-      isConnectedRef.current = false;
-    };
   }, [
     onLogEntry,
     onComplianceUpdate,
