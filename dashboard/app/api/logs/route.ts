@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const endDate = searchParams.get("end_date");
     const limit = parseInt(searchParams.get("limit") || "100");
 
-    let query = db.select().from(logEntries);
+    const query = db.select().from(logEntries);
     const conditions = [];
 
     if (sessionId) {
@@ -30,11 +30,13 @@ export async function GET(request: Request) {
       conditions.push(lte(logEntries.timestamp, new Date(endDate)));
     }
 
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
+    // Apply conditions if any exist
+    const finalQuery =
+      conditions.length > 0 ? query.where(and(...conditions)) : query;
 
-    const logs = await query.orderBy(desc(logEntries.timestamp)).limit(limit);
+    const logs = await finalQuery
+      .orderBy(desc(logEntries.timestamp))
+      .limit(limit);
 
     return Response.json(logs);
   } catch (error) {

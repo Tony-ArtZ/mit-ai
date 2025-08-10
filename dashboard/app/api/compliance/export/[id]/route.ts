@@ -5,10 +5,11 @@ import { eq, gte, lte, and } from "drizzle-orm";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const reportId = parseInt(params.id);
+    const { id } = await params;
+    const reportId = parseInt(id);
 
     const report = await db
       .select()

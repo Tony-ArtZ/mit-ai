@@ -1,21 +1,28 @@
 #!/usr/bin/env node
 
-import db from "../db/index.ts";
-import { compliancePolicies } from "../db/schema.ts";
+import db from "../db/index";
+import { compliancePolicies } from "../db/schema";
 
 const defaultPolicies = [
   {
     name: "PII Data Detection",
-    description: "Detects potential personally identifiable information in logs",
+    description:
+      "Detects potential personally identifiable information in logs",
     category: "data_privacy",
     severity: "high",
     rule_config: {
       type: "data_detection",
       parameters: {
         data_types: ["email", "ssn", "credit_card", "phone"],
-        fields: ["prompt", "response", "user_input", "tool_input", "tool_output"]
-      }
-    }
+        fields: [
+          "prompt",
+          "response",
+          "user_input",
+          "tool_input",
+          "tool_output",
+        ],
+      },
+    },
   },
   {
     name: "Excessive Token Usage",
@@ -27,9 +34,9 @@ const defaultPolicies = [
       parameters: {
         field: "llm_usage.total_tokens",
         threshold: 10000,
-        operator: "gt"
-      }
-    }
+        operator: "gt",
+      },
+    },
   },
   {
     name: "Error Rate Threshold",
@@ -41,9 +48,9 @@ const defaultPolicies = [
       parameters: {
         field: "error_count",
         threshold: 5,
-        operator: "gte"
-      }
-    }
+        operator: "gte",
+      },
+    },
   },
   {
     name: "Sensitive Keywords",
@@ -56,11 +63,11 @@ const defaultPolicies = [
         patterns: [
           "\\b(password|secret|key|token|api[-_]?key)\\b",
           "\\b(confidential|classified|restricted)\\b",
-          "\\b(ssn|social security)\\b"
+          "\\b(ssn|social security)\\b",
         ],
-        fields: ["prompt", "response", "user_input"]
-      }
-    }
+        fields: ["prompt", "response", "user_input"],
+      },
+    },
   },
   {
     name: "Long Session Duration",
@@ -72,9 +79,9 @@ const defaultPolicies = [
       parameters: {
         field: "elapsed_time",
         threshold: 3600, // 1 hour
-        operator: "gt"
-      }
-    }
+        operator: "gt",
+      },
+    },
   },
   {
     name: "GDPR Compliance Check",
@@ -86,18 +93,24 @@ const defaultPolicies = [
       parameters: {
         patterns: [
           "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b", // Email addresses
-          "\\b\\d{1,2}[/-]\\d{1,2}[/-]\\d{4}\\b" // Dates that might be birthdates
+          "\\b\\d{1,2}[/-]\\d{1,2}[/-]\\d{4}\\b", // Dates that might be birthdates
         ],
-        fields: ["prompt", "response", "user_input", "tool_input", "tool_output"]
-      }
-    }
-  }
+        fields: [
+          "prompt",
+          "response",
+          "user_input",
+          "tool_input",
+          "tool_output",
+        ],
+      },
+    },
+  },
 ];
 
 async function seedPolicies() {
   try {
     console.log("Seeding compliance policies...");
-    
+
     for (const policy of defaultPolicies) {
       await db.insert(compliancePolicies).values({
         name: policy.name,
@@ -105,11 +118,11 @@ async function seedPolicies() {
         category: policy.category,
         severity: policy.severity,
         rule_config: policy.rule_config,
-        is_active: true
+        is_active: true,
       });
       console.log(`Created policy: ${policy.name}`);
     }
-    
+
     console.log("✅ Successfully seeded compliance policies!");
   } catch (error) {
     console.error("❌ Failed to seed policies:", error);

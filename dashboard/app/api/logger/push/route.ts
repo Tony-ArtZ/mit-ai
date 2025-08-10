@@ -1,7 +1,7 @@
 import db from "@/db";
 import { logEntries } from "@/db/schema";
 import { complianceChecker } from "@/lib/compliance-checker";
-import { broadcastUpdate } from "@/app/api/events/route";
+import { broadcastUpdate } from "@/lib/sse-utils";
 import type { LogEntry } from "@/types/logger";
 
 export async function GET() {
