@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "seed-policies": "node scripts/seed-policies.js"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.3",
