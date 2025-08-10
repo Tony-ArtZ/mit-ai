@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Agents Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        line-height: 1.6;
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 60px;
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 40px;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        color: #666666;
+        font-weight: 400;
+      }
+
+      .agents-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 40px;
+        margin-bottom: 60px;
+      }
+
+      .agent-card {
+        background: #ffffff;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        padding: 40px;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .agent-card:hover {
+        border-color: #1a1a1a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .agent-card h2 {
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        font-size: 1.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .agent-icon {
+        font-size: 1.2rem;
+      }
+
+      .agent-card p {
+        color: #666666;
+        margin-bottom: 32px;
+        font-size: 0.95rem;
+      }
+
+      .select-agent-btn {
+        width: 100%;
+        padding: 16px 24px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .select-agent-btn:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+      }
+
+      .select-agent-btn.active {
+        background-color: #000000;
+      }
+
+      .chat-container {
+        background: #ffffff;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        padding: 40px;
+        display: none;
+      }
+
+      .chat-container.active {
+        display: block;
+      }
+
+      .chat-header {
+        margin-bottom: 32px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .chat-header h3 {
+        color: #1a1a1a;
+        font-size: 1.3rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .chat-messages {
+        height: 500px;
+        overflow-y: auto;
+        border: 1px solid #f0f0f0;
+        border-radius: 6px;
+        padding: 24px;
+        margin-bottom: 24px;
+        background-color: #fafafa;
+      }
+
+      .chat-messages::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .chat-messages::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+
+      .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+      }
+
+      .message {
+        margin-bottom: 20px;
+        padding: 16px 20px;
+        border-radius: 8px;
+        max-width: 80%;
+        position: relative;
+      }
+
+      .user-message {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        margin-left: auto;
+        text-align: right;
+      }
+
+      .agent-message {
+        background-color: #ffffff;
+        color: #1a1a1a;
+        border: 1px solid #e5e5e5;
+        margin-right: auto;
+      }
+
+      .message-time {
+        font-size: 0.75rem;
+        opacity: 0.6;
+        margin-top: 8px;
+        font-weight: 400;
+      }
+
+      .chat-input-container {
+        display: flex;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .chat-input {
+        flex: 1;
+        padding: 16px 20px;
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s ease;
+        background-color: #ffffff;
+        font-family: inherit;
+      }
+
+      .chat-input:focus {
+        border-color: #1a1a1a;
+      }
+
+      .chat-input::placeholder {
+        color: #999999;
+      }
+
+      .send-btn {
+        padding: 16px 32px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      .send-btn:hover:not(:disabled) {
+        background-color: #333333;
+      }
+
+      .send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #999999;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #28a745;
+        margin-right: 8px;
+      }
+
+      .status-indicator.offline {
+        background-color: #dc3545;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 20px 16px;
+        }
+
+        .agents-container {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .agent-card {
+          padding: 24px;
+        }
+
+        .chat-container {
+          padding: 24px;
+        }
+
+        .chat-messages {
+          height: 400px;
+        }
+
+        .chat-input-container {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .send-btn {
+          padding: 16px;
+        }
+
+        .message {
+          max-width: 90%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .agents-container {
+          grid-template-columns: 1fr;
+        }
+
+        .agent-card {
+          padding: 20px;
+        }
+
+        .chat-container {
+          padding: 20px;
+        }
+
+        .header h1 {
+          font-size: 1.75rem;
+        }
+      }
+
+      /* Loading animation */
+      .loading-dots {
+        display: inline-block;
+      }
+
+      .loading-dots::after {
+        content: "";
+        animation: dots 1.5s steps(4, end) infinite;
+      }
+
+      @keyframes dots {
+        0%,
+        20% {
+          content: "";
+        }
+        40% {
+          content: ".";
+        }
+        60% {
+          content: "..";
+        }
+        80%,
+        100% {
+          content: "...";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>AI Agents Dashboard</h1>
+        <p>Choose an agent to start your conversation</p>
+      </div>
+
+      <div class="agents-container">
+        <div class="agent-card">
+          <h2>
+            <span class="agent-icon">🛍️</span>
+            Customer Service Agent
+          </h2>
+          <p>
+            Get help with orders, refunds, product information, and general
+            customer support. I can check order status, process refunds, and
+            escalate complex issues to human support.
+          </p>
+          <button class="select-agent-btn" onclick="selectAgent('customer')">
+            Select Customer Agent
+          </button>
+        </div>
+
+        <div class="agent-card">
+          <h2>
+            <span class="agent-icon">📊</span>
+            Workflow Agent
+          </h2>
+          <p>
+            Automate structured processes including report parsing, financial
+            model execution, data analysis, and multi-step workflow
+            orchestration. Perfect for analytical tasks and process automation.
+          </p>
+          <button class="select-agent-btn" onclick="selectAgent('workflow')">
+            Select Workflow Agent
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+          <h3 id="chat-title">
+            <span class="status-indicator" id="status-indicator"></span>
+            Select an Agent
+          </h3>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="message agent-message">
+            <div>
+              Welcome! Please select an agent above to start our conversation.
+            </div>
+            <div class="message-time" id="welcome-time"></div>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <input
+            type="text"
+            id="chat-input"
+            class="chat-input"
+            placeholder="Type your message here..."
+            onkeypress="handleKeyPress(event)"
+            disabled
+          />
+          <button
+            class="send-btn"
+            id="send-btn"
+            onclick="sendMessage()"
+            disabled
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentAgent = null;
+
+      function selectAgent(agentType) {
+        currentAgent = agentType;
+
+        // Update button states
+        document.querySelectorAll(".select-agent-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        event.target.classList.add("active");
+
+        // Show chat container
+        const chatContainer = document.getElementById("chat-container");
+        chatContainer.classList.add("active");
+
+        // Update chat title and status
+        const chatTitle = document.getElementById("chat-title");
+        const statusIndicator = document.getElementById("status-indicator");
+
+        if (agentType === "customer") {
+          chatTitle.innerHTML =
+            '<span class="status-indicator"></span>🛍️ Customer Service Agent';
+        } else {
+          chatTitle.innerHTML =
+            '<span class="status-indicator"></span>📊 Workflow Agent';
+        }
+
+        // Enable input and send button
+        const chatInput = document.getElementById("chat-input");
+        const sendBtn = document.getElementById("send-btn");
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+
+        // Clear previous messages and add welcome message
+        const chatMessages = document.getElementById("chat-messages");
+        const welcomeMessage =
+          agentType === "customer"
+            ? "Hello! I'm your customer service agent. I can help you with order status, refunds, product information, and more. How can I assist you today?"
+            : "Hello! I'm your workflow automation agent. I specialize in parsing reports, running financial models, orchestrating workflows, and data analysis. What process would you like me to help automate?";
+
+        chatMessages.innerHTML = `
+          <div class="message agent-message">
+            <div>${welcomeMessage}</div>
+            <div class="message-time">${new Date().toLocaleTimeString()}</div>
+          </div>
+        `;
+
+        // Focus on input
+        chatInput.focus();
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      }
+
+      async function sendMessage() {
+        if (!currentAgent) {
+          alert("Please select an agent first!");
+          return;
+        }
+
+        const input = document.getElementById("chat-input");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        const sendBtn = document.getElementById("send-btn");
+
+        // Add user message
+        addMessage(message, "user");
+        input.value = "";
+
+        // Disable send button and show loading
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<span class="loading-dots">Sending</span>';
+
+        try {
+          const response = await fetch(`/chat/${currentAgent}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: message }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            addMessage(data.response, "agent");
+          } else {
+            addMessage(`Error: ${data.error}`, "agent");
+          }
+        } catch (error) {
+          addMessage(
+            `Error: Failed to send message. ${error.message}`,
+            "agent"
+          );
+        } finally {
+          // Re-enable send button
+          sendBtn.disabled = false;
+          sendBtn.innerHTML = "Send";
+          input.focus();
+        }
+      }
+
+      function addMessage(text, sender) {
+        const chatMessages = document.getElementById("chat-messages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${sender}-message`;
+
+        messageDiv.innerHTML = `
+          <div>${text}</div>
+          <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Set welcome time on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        const welcomeTime = document.getElementById("welcome-time");
+        if (welcomeTime) {
+          welcomeTime.textContent = new Date().toLocaleTimeString();
+        }
+      });
+    </script>
+  </body>
+</html>
