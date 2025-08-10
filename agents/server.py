@@ -59,8 +59,9 @@ def initialize_agents():
         return
     
     try:
-        # Logger push URL - configure this as needed
-        push_url = "http://localhost:3000/api/logger/push"
+        # Logger push URL - use environment variable for Docker deployment
+        dashboard_url = os.environ.get('DASHBOARD_URL', 'http://localhost:3000')
+        push_url = f"{dashboard_url}/api/logger/push"
         
         if create_customer_agent:
             # Create customer agent with logging enabled
@@ -195,8 +196,14 @@ if __name__ == '__main__':
     print("Agent status:")
     print(f"  Customer Agent: {'✓ Loaded' if customer_agent else '✗ Demo Mode'}")
     print(f"  Workflow Agent: {'✓ Loaded' if workflow_agent else '✗ Demo Mode'}")
-    print(f"\nOpen http://localhost:{port} in your browser")
-    print("\nNote: To enable auto-reload during development, set FLASK_USE_RELOADER=true")
+    
+    # Show appropriate URL based on environment
+    if 'DOCKER' in os.environ or 'docker' in os.environ.get('hostname', '').lower():
+        print(f"\n🐳 Docker container running on port {port}")
+        print("Access the service through your Docker host")
+    else:
+        print(f"\nOpen http://localhost:{port} in your browser")
+        print("\nNote: To enable auto-reload during development, set FLASK_USE_RELOADER=true")
     
     # Use configurable debug mode and reloader
     app.run(host='0.0.0.0', port=port, debug=debug_mode, use_reloader=use_reloader)

@@ -31,6 +31,11 @@ class AgentLogger:
 		self.include_timestamps = include_timestamps
 		self.include_parameters = include_parameters
 		self.log_level = log_level.upper()
+		
+		# Use environment variable for push URL if not provided
+		if push_url is None:
+			dashboard_url = os.environ.get('DASHBOARD_URL', 'http://localhost:3000')
+			push_url = f"{dashboard_url}/api/logger/push"
 		self.push_url = push_url
 
 		if log_file_path is None:

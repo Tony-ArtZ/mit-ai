@@ -1,0 +1,1 @@
+{"session_id": "09bc0226-aec3-49e3-9918-1b79f22777a9", "event_type": "agent_init", "call_id": "d3991c28-cbe6-4d10-820b-7059ebb3f97b", "sequence_number": 1, "timestamp": "2025-08-10T04:42:28.537957", "elapsed_time": 0.0393376350402832, "agent_type": "customer_service", "tools_count": 4, "model": "gemini-pro", "max_iterations": 3}

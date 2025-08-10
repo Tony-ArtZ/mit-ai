@@ -1,0 +1,19 @@
+# Add Docker ignore patterns
+node_modules/
+.next/
+.git/
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.coverage
+.pytest_cache/
+logs/
+*.db
+*.sqlite3
