@@ -1,1 +1,0 @@
-{"session_id": "e04eee02-9807-4df4-94a4-0fc3cfc00a4b", "event_type": "agent_init", "call_id": "af05b571-82e0-4867-9793-b400672e4a40", "sequence_number": 1, "timestamp": "2025-08-09T16:09:12.739860", "elapsed_time": 0.0019106864929199219, "agent_type": "workflow_automation", "tools_count": 5, "model": "gemini-pro", "max_iterations": 5}

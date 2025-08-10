@@ -1,5 +1,7 @@
 import db from "@/db";
 import { logEntries } from "@/db/schema";
+import { complianceChecker } from "@/lib/compliance-checker";
+import { broadcastUpdate } from "@/app/api/events/route";
 import type { LogEntry } from "@/types/logger";
 
 export async function GET() {
@@ -59,6 +61,19 @@ export async function POST(request: Request) {
     const result = await db.insert(logEntries).values(entry).returning();
 
     console.log("Successfully inserted log entry with ID:", result[0].id);
+
+    // Broadcast the new log entry to connected SSE clients
+    broadcastUpdate("log_entry", {
+      type: "new_log",
+      data: result[0],
+      session_id: logEntry.session_id,
+      event_type: logEntry.event_type,
+    });
+
+    // Run compliance check asynchronously
+    complianceChecker.checkLogEntry(logEntry).catch((error) => {
+      console.error("Compliance check failed:", error);
+    });
 
     return Response.json({
       received: true,

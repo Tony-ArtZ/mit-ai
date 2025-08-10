@@ -7,23 +7,23 @@ async function testLogger() {
     sequence_number: 1,
     timestamp: new Date().toISOString(),
     input: "Hello, this is a test message",
-    agent_type: "customer_service"
+    agent_type: "customer_service",
   };
 
   try {
-    const response = await fetch('http://localhost:3001/api/logger/push', {
-      method: 'POST',
+    const response = await fetch("http://localhost:3001/api/logger/push", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(testLogEntry)
+      body: JSON.stringify(testLogEntry),
     });
 
     const result = await response.json();
-    console.log('Response:', result);
-    console.log('Status:', response.status);
+    console.log("Response:", result);
+    console.log("Status:", response.status);
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 }
 
@@ -38,7 +38,7 @@ async function testDifferentLogTypes() {
       agent_type: "customer_service",
       tools_count: 5,
       model: "gpt-4",
-      max_iterations: 10
+      max_iterations: 10,
     },
     {
       session_id: "test-session-123",
@@ -49,8 +49,8 @@ async function testDifferentLogTypes() {
       model: "gpt-4",
       parameters: {
         temperature: 0.7,
-        max_tokens: 1000
-      }
+        max_tokens: 1000,
+      },
     },
     {
       session_id: "test-session-123",
@@ -59,7 +59,7 @@ async function testDifferentLogTypes() {
       sequence_number: 3,
       tool_name: "search_database",
       tool_input: { query: "customer orders" },
-      tool_output: { results: ["order1", "order2"] }
+      tool_output: { results: ["order1", "order2"] },
     },
     {
       session_id: "test-session-123",
@@ -69,30 +69,30 @@ async function testDifferentLogTypes() {
       error: "Database connection failed",
       context: {
         component: "database",
-        user_input: "search orders"
-      }
-    }
+        user_input: "search orders",
+      },
+    },
   ];
 
   for (const entry of testEntries) {
     try {
       console.log(`\nTesting ${entry.event_type} log entry...`);
-      const response = await fetch('http://localhost:3001/api/logger/push', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/api/logger/push", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(entry)
+        body: JSON.stringify(entry),
       });
 
       const result = await response.json();
-      console.log('Response:', result);
-      console.log('Status:', response.status);
+      console.log("Response:", result);
+      console.log("Status:", response.status);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   }
 }
 
-console.log('Starting logger tests...');
+console.log("Starting logger tests...");
 testDifferentLogTypes();

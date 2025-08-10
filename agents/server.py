@@ -27,6 +27,8 @@ customer_module = import_agent_module(
 if customer_module and hasattr(customer_module, 'create_customer_agent'):
     create_customer_agent = customer_module.create_customer_agent
     print("✓ Customer agent imported successfully")
+else:
+    print("✗ Customer agent import failed")
 
 # Import workflow agent
 workflow_module = import_agent_module(
@@ -36,6 +38,8 @@ workflow_module = import_agent_module(
 if workflow_module and hasattr(workflow_module, 'create_workflow_agent'):
     create_workflow_agent = workflow_module.create_workflow_agent
     print("✓ Workflow agent imported successfully")
+else:
+    print("✗ Workflow agent import failed")
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
@@ -43,10 +47,17 @@ app.secret_key = 'your-secret-key-here'
 # Initialize agents (will be None if imports failed)
 customer_agent = None
 workflow_agent = None
+agents_initialized = False
 
 def initialize_agents():
     """Initialize the agents if possible."""
-    global customer_agent, workflow_agent
+    global customer_agent, workflow_agent, agents_initialized
+    
+    # Prevent multiple initializations
+    if agents_initialized:
+        print("Agents already initialized, skipping...")
+        return
+    
     try:
         # Logger push URL - configure this as needed
         push_url = "http://localhost:3000/api/logger/push"
@@ -57,6 +68,8 @@ def initialize_agents():
         if create_workflow_agent:
             # Create workflow agent with logging enabled
             workflow_agent = create_workflow_agent(enable_logging=True, push_url=push_url)
+        
+        agents_initialized = True
         print("Agents initialized successfully with logging!")
     except Exception as e:
         print(f"Error initializing agents: {e}")
@@ -173,10 +186,17 @@ if __name__ == '__main__':
     # Get port from environment or default to 5000
     port = int(os.environ.get('PORT', 5000))
     
+    # Configure debug and reloader settings
+    debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    use_reloader = os.environ.get('FLASK_USE_RELOADER', 'False').lower() == 'true'
+    
     print(f"Starting server on port {port}")
+    print(f"Debug mode: {debug_mode}, Auto-reload: {use_reloader}")
     print("Agent status:")
     print(f"  Customer Agent: {'✓ Loaded' if customer_agent else '✗ Demo Mode'}")
     print(f"  Workflow Agent: {'✓ Loaded' if workflow_agent else '✗ Demo Mode'}")
     print(f"\nOpen http://localhost:{port} in your browser")
+    print("\nNote: To enable auto-reload during development, set FLASK_USE_RELOADER=true")
     
-    app.run(host='0.0.0.0', port=port, debug=True)
+    # Use configurable debug mode and reloader
+    app.run(host='0.0.0.0', port=port, debug=debug_mode, use_reloader=use_reloader)
