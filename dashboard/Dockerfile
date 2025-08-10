@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM oven/bun:1-alpine
 
 # Install curl for health checks
 RUN apk add --no-cache curl
@@ -6,17 +6,17 @@ RUN apk add --no-cache curl
 WORKDIR /app
 
 # Copy package files first for better caching
-COPY package*.json ./
-COPY bun.lock* ./
+COPY package.json ./
+COPY bun.lock ./
 
 # Install dependencies
-RUN npm install
+RUN bun install --frozen-lockfile
 
 # Copy application code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN bun run build
 
 # Expose port
 EXPOSE 3000
@@ -26,4 +26,4 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 # Run the application
-CMD ["npm", "start"]
+CMD ["bun", "start"]
